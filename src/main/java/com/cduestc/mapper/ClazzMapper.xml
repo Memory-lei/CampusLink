@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cduestc.mapper.ClazzMapper">
+    <!-- 子元素1：select 语句 -->
+    <select id="selInfo" parameterType="int" resultType="com.cduestc.pojo.Person">
+        select * from person where card_cid = #{cid}
+    </select>
+    <!-- 子元素2：其他语句（可选） -->
+    <select id="findById" parameterType="int" resultType="com.cduestc.pojo.Person">
+        select * from person where pid = #{pid}
+    </select>
+    <resultMap id="clazzmap" type="com.cduestc.pojo.Clazz">
+        <id property="claid" column="claid" />
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <collection property="lststu" javaType="java.util.List" ofType="Student"
+            column="claid"
+            select ="com.cduestc.mapper.StudentMapper.selByClaid" fetchType="lazy"></collection>
+
+    </resultMap>
+    <select id="selByCode" parameterType="String" resultMap="clazzmap">
+        select * from classes where code =#{code}
+    </select>
+    <resultMap id="clazzmap2" type="com.cduestc.pojo.Clazz">
+        <id property="claid" column="claid" />
+        <result property="code" column="code"/>
+        <result property="name" column="claname"/>
+        <collection property="lststu" javaType="java.util.List" ofType="com.cduestc.pojo.Student">
+            <id property="sid" column="sid" />
+            <result property="name" column="stuname"/>
+            <result property="sex" column="sex"/>
+            <result  property="age" column="age"/>
+        </collection>
+
+    </resultMap>
+    <select id="selByCode2" parameterType="String" resultMap="clazzmap2">
+        select stu.sid,stu.name stuname,stu.sex,stu.age,
+               cla.claid,cla.name claname,cla.code
+        from classes cla,student stu
+        where stu.class_id=cla.claid and cla.code = #{code}
+    </select>
+</mapper>

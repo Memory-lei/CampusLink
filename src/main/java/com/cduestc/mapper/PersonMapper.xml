@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.cduestc.mapper.PersonMapper">
+    <resultMap id="personmap" type="com.cduestc.pojo.Person">
+        <id property="pid" column="pid"/>
+        <result property="pname" column="pname"/>
+        <result property="page" column="page"/>
+        <association property="card" javaType="com.cduestc.pojo.Card"
+                     column="card_id"
+                     select="com.cduestc.mapper.CardMapper.selByCardId"/>
+    </resultMap>
+    <select id="SelById" parameterType="Integer" resultMap="personmap">
+        select * from person where pid =#{pid}
+    </select>
+    <select id="selInfo" parameterType="int" resultMap="personmap">
+        select  * from person where card_id = #{cid}
+    </select>
+</mapper>

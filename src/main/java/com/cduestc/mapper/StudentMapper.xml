@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.cduestc.mapper.StudentMapper">
+    <resultMap id="stumap" type="com.cduestc.pojo.Student">
+        <id property="sid" column="sid" />
+        <result property="name" column="stuname"/>
+        <result property="sex" column="sex"/>
+        <result  property="age" column="age"/>
+        <association property="clazz" javaType="com.cduestc.pojo.Clazz">
+            <id property="claid" column="claid" />
+            <result property="code" column="code"/>
+            <result property="name" column="classname"/>
+        </association>
+    </resultMap>
+    <select id="findAll" resultMap="stumap">
+        select stu.sid,stu.name as stuname,stu.sex,stu.age,
+               cla.claid,cla.code,cla.name as classname
+        from student stu,classes cla
+        where stu.class_id = cla.claid
+    </select>
+    <select id="selByClaid" parameterType="int" resultType="com.cduestc.pojo.Student">
+        select * from student where class_id = #{claid}
+    </select>
+
+
+
+    <resultMap id="StudentWithSubjectsResultMap" type="com.cduestc.pojo.Student">
+        <!-- 映射学生表字段 -->
+        <id property="sid" column="sid"/> <!-- 主键字段 -->
+        <result property="name" column="name"/> <!-- 学生姓名 -->
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="class_id" column="class_id"/>
+        <collection property="subjects" ofType="com.cduestc.pojo.Subject">
+            <!-- 映射课程表字段（注意与学生表字段重名时用别名） -->
+            <id property="subid" column="subid"/> <!-- 课程主键 -->
+            <result property="name" column="sub_name"/> <!-- 课程名称（别名区分） -->
+            <result property="number" column="number"/> <!-- 课程编号 -->
+        </collection>
+    </resultMap>
+    <select id="selectStudentWithSubjects" parameterType="int" resultMap="StudentWithSubjectsResultMap">
+        SELECT
+        s.sid,
+        s.name,
+        s.sex,
+        s.age,
+        s.class_id,
+        sub.subid,
+        sub.name AS sub_name,
+        sub.number
+        FROM student s
+        LEFT JOIN student_subject ss ON s.sid = ss.sid
+        LEFT JOIN subject sub ON ss.subid = sub.subid
+        WHERE s.sid = #{sid}
+    </select>
+</mapper>

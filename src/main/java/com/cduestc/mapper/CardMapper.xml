@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace表示命名空间 -->
+<mapper namespace="com.cduestc.mapper.CardMapper">
+    <select id="selByCardId" parameterType="int" resultType="com.cduestc.pojo.Card">
+        select * from  card where cid =#{cid}
+    </select>
+    <resultMap id="cardmap" type="com.cduestc.pojo.Card">
+        <id property="cid" column="cid"></id>
+        <result property="code" column="code"></result>
+        <association property="person" javaType="com.cduestc.pojo.Person"
+                     column="cid"
+                     select="com.cduestc.mapper.PersonMapper.selInfo"/>
+    </resultMap>
+    <select id="selByCode" parameterType="String" resultMap="cardmap">
+        select * from card where code = #{code}
+    </select>
+    <resultMap id="cardmap2" type="com.cduestc.pojo.Card">
+        <id property="cid" column="cid"></id>
+        <result property="code" column="code"></result>
+        <association property="person" javaType="com.cduestc.pojo.Person">
+            <id property="pid" column="pid"/>
+            <result property="pname" column="pname"/>
+            <result property="page" column="page"/>
+        </association>
+    </resultMap>
+    <select id="selByCode2" parameterType="String" resultMap="cardmap2">
+        select cd.cid,cd.code,ps.pid,ps.name,ps.page
+        from card cd,person ps
+        where ps.card_id = cd.cid and cd.code = #{code}
+
+    </select>
+</mapper>
